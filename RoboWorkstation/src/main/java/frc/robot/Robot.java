@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.Faults;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -28,15 +29,16 @@ public class Robot extends TimedRobot {
   TalonSRX m_motor = new TalonSRX(2);
   Joystick r_joystick = new Joystick(0);
   Faults _faults = new Faults();
-  // private int timeoutMs = 30;
+  private int timeoutMs = 30;
 
   @Override
   public void robotInit() {
     m_motor.configFactoryDefault();
 
-    m_motor.setInverted(true);
+    m_motor.setInverted(false); //inverts if needed
 
-    m_motor.setSensorPhase(false); // TODO
+    m_motor.setSensorPhase(false); // inverts if needed
+    m_motor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder); //we are using quadrature coder: https://docs.wpilib.org/en/stable/docs/hardware/sensors/encoders-hardware.html#quadrature-encoders
   }
 
   @Override
@@ -57,7 +59,7 @@ public class Robot extends TimedRobot {
     // TODO: experiment with these
     // m_motor.configClearPositionOnLimitF(true, timeoutMs);
     // m_motor.configClearPositionOnLimitR(true, timeoutMs);
-    // m_motor.configClearPositionOnQuadIdx(true, timeoutMs);
+    m_motor.configClearPositionOnQuadIdx(true, timeoutMs);
     m_motor.setNeutralMode(NeutralMode.Brake);
   }
 
