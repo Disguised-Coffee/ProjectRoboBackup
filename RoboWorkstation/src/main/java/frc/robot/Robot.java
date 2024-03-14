@@ -21,14 +21,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
-
-  TalonSRX m_motor = new TalonSRX(2);
+  /** motor obj */
+  TalonSRX m_motor = new TalonSRX(2); 
+  /** joystick obj */
   Joystick r_joystick = new Joystick(0);
-  Faults _faults = new Faults();
+  Faults _faults = new Faults(); // for faults from the motor (I never knew you can do this from code!!)
 
   @Override
   public void robotInit() {
@@ -53,22 +50,29 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     m_motor.setSelectedSensorPosition(0); // resets motor to 0
-    m_motor.setNeutralMode(NeutralMode.Brake);
+    m_motor.setNeutralMode(NeutralMode.Brake); // automatically brake the motor when we start driving.
   }
 
   @Override
   public void teleopPeriodic() {
+    // drive a motor
     m_motor.set(TalonSRXControlMode.PercentOutput, r_joystick.getY());
+
+    // update position and velocity on SmartDash
     SmartDashboard.setDefaultNumber("pos",m_motor.getSelectedSensorPosition());
     SmartDashboard.setDefaultNumber("Velocity", m_motor.getSelectedSensorVelocity());
+
+    // Update if motor is out of phase
     m_motor.getFaults(_faults);
     SmartDashboard.setDefaultBoolean("Out of Phase: ", _faults.SensorOutOfPhase);
+
+    //Update voltage
     SmartDashboard.setDefaultNumber("Voltage ", m_motor.getMotorOutputVoltage());;
   }
 
   @Override
   public void disabledInit() {
-    m_motor.setNeutralMode(NeutralMode.Coast);
+    m_motor.setNeutralMode(NeutralMode.Coast); // Move freely when disabled. Helpful for when you want to move the bot.
   }
 
   @Override
