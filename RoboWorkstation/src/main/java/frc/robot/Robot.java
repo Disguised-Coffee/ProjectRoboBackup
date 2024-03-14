@@ -29,11 +29,10 @@ public class Robot extends TimedRobot {
   TalonSRX m_motor = new TalonSRX(2);
   Joystick r_joystick = new Joystick(0);
   Faults _faults = new Faults();
-  private int timeoutMs = 30;
 
   @Override
   public void robotInit() {
-    m_motor.configFactoryDefault();
+    m_motor.configFactoryDefault(); //Might not be needed
 
     m_motor.setInverted(false); //inverts if needed
 
@@ -43,9 +42,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    SmartDashboard.setDefaultNumber("Pos", m_motor.getSelectedSensorPosition());
-    SmartDashboard.setDefaultNumber("Velocity", m_motor.getSelectedSensorVelocity());
-    SmartDashboard.setDefaultBoolean("Out of Phase: ", _faults.SensorOutOfPhase);
   }
 
   @Override
@@ -56,16 +52,18 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    // TODO: experiment with these
-    // m_motor.configClearPositionOnLimitF(true, timeoutMs);
-    // m_motor.configClearPositionOnLimitR(true, timeoutMs);
-    m_motor.configClearPositionOnQuadIdx(true, timeoutMs);
+    m_motor.setSelectedSensorPosition(0); // resets motor to 0
     m_motor.setNeutralMode(NeutralMode.Brake);
   }
 
   @Override
   public void teleopPeriodic() {
     m_motor.set(TalonSRXControlMode.PercentOutput, r_joystick.getY());
+    SmartDashboard.setDefaultNumber("pos",m_motor.getSelectedSensorPosition());
+    SmartDashboard.setDefaultNumber("Velocity", m_motor.getSelectedSensorVelocity());
+    m_motor.getFaults(_faults);
+    SmartDashboard.setDefaultBoolean("Out of Phase: ", _faults.SensorOutOfPhase);
+    SmartDashboard.setDefaultNumber("Voltage ", m_motor.getMotorOutputVoltage());;
   }
 
   @Override
